@@ -89,7 +89,7 @@ def detalle(id):
             flash("No tienes acceso a los detalles de este proyecto.", "danger")
             return redirect(url_for("proyectos.index"))
             
-    # Obtener el listado de técnicos disponibles para el formulario de asignación
+    # Obtener el listado de técnicos disponibles para el formulario de asignación 
     tecnicos = Usuario.query.all()
     return render_template("proyectos/detalle.html", proyecto=proyecto, tecnicos=tecnicos)
 
@@ -98,7 +98,7 @@ def detalle(id):
 def registrar_avance(proyecto_id):
     proyecto = Proyecto.query.get_or_404(proyecto_id)
     
-    # Restricción: Los Colaboradores Técnicos pueden registrar avances siempre que pertenezcan al proyecto
+    # Restricción: Los Colaboradores Técnicos pueden registrar avances siempre que pertenezcan al proyecto 
     if current_user.rol.nombre == "Colaborador Técnico":
         pertenece = EquipoProyecto.query.filter_by(proyecto_id=proyecto_id, usuario_id=current_user.id).first()
         if not belongs:

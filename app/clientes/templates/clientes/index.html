@@ -19,7 +19,8 @@
             <div class="col-md-9">
                 <div class="input-group">
                     <span class="input-group-text bg-light border-0 text-secondary"><i class="bi bi-search"></i></span>
-                    <input type="text" name="buscar" class="form-control bg-light border-0 py-2" placeholder="Buscar por nombre, empresa o NIT..." value="{{ buscar }}">
+                    <input type="text" name="buscar" class="form-control bg-light border-0 py-2"
+                        placeholder="Buscar por nombre, empresa o NIT..." value="{{ buscar }}">
                 </div>
             </div>
             <div class="col-md-3 d-grid">
@@ -42,7 +43,8 @@
                         <th class="border-0 py-3 text-secondary small text-uppercase fw-bold">Correo</th>
                         <th class="border-0 py-3 text-secondary small text-uppercase fw-bold">NIT</th>
                         {% if current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
-                        <th class="border-0 py-3 pe-4 text-secondary small text-uppercase fw-bold text-end">Acciones</th>
+                        <th class="border-0 py-3 pe-4 text-secondary small text-uppercase fw-bold text-end">Acciones
+                        </th>
                         {% endif %}
                     </tr>
                 </thead>
@@ -57,9 +59,21 @@
                         <td class="py-3"><code class="text-secondary">{{ cliente.nit }}</code></td>
                         {% if current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
                         <td class="py-3 pe-4 text-end">
-                            <a href="{{ url_for('clientes.editar', id=cliente.id) }}" class="btn btn-sm btn-outline-danger fw-bold rounded-3 px-3 py-1">
-                                <i class="bi bi-pencil-square me-1"></i>Editar
-                            </a>
+                            <div class="d-flex justify-content-end align-items-center gap-2">
+                                <a href="{{ url_for('clientes.editar', id=cliente.id) }}"
+                                    class="btn btn-sm btn-outline-danger fw-bold rounded-3 px-3 py-1">
+                                    <i class="bi bi-pencil-square me-1"></i>Editar
+                                </a>
+
+                                <form action="{{ url_for('clientes.eliminar', id=cliente.id) }}" method="POST"
+                                    onsubmit="return confirm('¿Estás seguro de que deseas eliminar permanentemente a este cliente? Esta acción no se puede deshacer.');"
+                                    class="d-inline">
+                                    <button type="submit"
+                                        class="btn btn-sm btn-outline-dark fw-bold rounded-3 px-3 py-1">
+                                        <i class="bi bi-trash-fill me-1"></i>Eliminar
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                         {% endif %}
                     </tr>
