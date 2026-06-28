@@ -61,7 +61,8 @@ def editar(id):
         flash("No tienes permisos para realizar esta acción.", "danger")
         return redirect(url_for("clientes.index"))
         
-    cliente = Cliente.query.get_or_400(id)
+    # AQUÍ ESTÁ EL CAMBIO: Debe terminar en 404
+    cliente = Cliente.query.get_or_404(id)
     
     if request.method == "POST":
         cliente.nombre = request.form.get("nombre")
@@ -76,3 +77,30 @@ def editar(id):
         return redirect(url_for("clientes.index"))
         
     return render_template("clientes/editar.html", cliente=cliente)
+
+
+@clientes_bp.route("/clientes/eliminar/<int:id>", methods=["POST"])
+@login_required
+def eliminar(id):
+    if not admin_o_manager_requerido():
+        flash("No tienes permisos para realizar esta acción.", "danger")
+        return redirect(url_for("clientes.index"))
+        
+    cliente = Cliente.query.get_or_404(id)
+    
+    try:
+        cliente_id = cliente.id
+        
+        db.session.delete(cliente)
+        db.session.commit()
+        
+        registrar_auditoria("ELIMINÓ CLIENTE", "clientes", cliente_id)
+        flash("Cliente eliminado exitosamente.", "success")
+        
+    except Exception as e:
+        db.session.rollback()
+        flash("No se puede eliminar el cliente porque tiene proyectos vinculados.", "danger")
+        
+    return redirect(url_for("clientes.index"))
+
+    
