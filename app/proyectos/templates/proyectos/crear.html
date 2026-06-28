@@ -4,124 +4,132 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<div class="row">
-    <div class="col-md-12 mb-4">
-        <h2>Registrar Nuevo Proyecto Arquitectónico</h2>
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h2 class="fw-bold text-dark mb-1">Registrar Nuevo Proyecto Arquitectónico</h2>
+        <p class="text-secondary mb-0">Crea un expediente técnico y asocia geolocalización al terreno u obra</p>
     </div>
-    
-    <form method="POST" class="row">
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header bg-dark text-white">Datos Técnicos del Proyecto</div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="codigo" class="form-label">Código Único</label>
-                            <input type="text" class="form-control" id="codigo" name="codigo" required placeholder="Ej: PRY-2026-01">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="estado" class="form-label">Estado Inicial</label>
-                            <select class="form-select" id="estado" name="estado" required>
-                                <option value="Diseño">Diseño</option>
-                                <option value="Construcción">Construcción</option>
-                                <option value="Concluido">Concluido</option>
-                                <option value="Suspendido">Suspendido</option>
-                            </select>
-                        </div>
+</div>
+
+<form method="POST" class="row g-4">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm bg-white h-100">
+            <div class="card-body p-4 p-md-5">
+                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-file-earmark-medical-fill text-danger me-2"></i>Datos Técnicos</h5>
+                
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="codigo" class="form-label text-dark-emphasis fw-semibold small">Código Único</label>
+                        <input type="text" class="form-control bg-white py-2" id="codigo" name="codigo" required placeholder="Ej: PRY-2026-01">
                     </div>
-                    <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre del Proyecto</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    <div class="col-md-6">
+                        <label for="estado" class="form-label text-dark-emphasis fw-semibold small">Estado Inicial</label>
+                        <select class="form-select bg-white py-2" id="estado" name="estado" required>
+                            <option value="Diseño">Diseño</option>
+                            <option value="Construcción">Construcción</option>
+                            <option value="Concluido">Concluido</option>
+                            <option value="Suspendido">Suspendido</option>
+                        </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción / Alcance</label>
-                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="nombre" class="form-label text-dark-emphasis fw-semibold small">Nombre del Proyecto</label>
+                    <input type="text" class="form-control bg-white py-2" id="nombre" name="nombre" required placeholder="Ej: Condominio Las Piedras">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="descripcion" class="form-label text-dark-emphasis fw-semibold small">Descripción / Alcance</label>
+                    <textarea class="form-control bg-white py-2" id="descripcion" name="descripcion" rows="3" required placeholder="Detalla el alcance del proyecto..."></textarea>
+                </div>
+                
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="presupuesto" class="form-label text-dark-emphasis fw-semibold small">Presupuesto (USD)</label>
+                        <input type="number" step="0.01" class="form-control bg-white py-2" id="presupuesto" name="presupuesto" required placeholder="0.00">
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="presupuesto" class="form-label">Presupuesto (USD)</label>
-                            <input type="number" step="0.01" class="form-control" id="presupuesto" name="presupuesto" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="cliente_id" class="form-label">Cliente Asociado</label>
-                            <select class="form-select" id="cliente_id" name="cliente_id" required>
-                                <option value="">Seleccione un cliente...</option>
-                                {% for cliente in clientes %}
-                                <option value="{{ cliente.id }}">{{ cliente.empresa }} ({{ cliente.nombre }})</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    {% if current_user.rol.nombre == 'Administrador' %}
-                    <div class="mb-3">
-                        <label for="responsable_id" class="form-label">Arquitecto Manager Responsable</label>
-                        <select class="form-select" id="responsable_id" name="responsable_id" required>
-                            {% for manager in managers %}
-                            <option value="{{ manager.id }}">{{ manager.nombre }}</option>
+                    <div class="col-md-6">
+                        <label for="cliente_id" class="form-label text-dark-emphasis fw-semibold small">Cliente Asociado</label>
+                        <select class="form-select bg-white py-2" id="cliente_id" name="cliente_id" required>
+                            <option value="">Seleccione un cliente...</option>
+                            {% for cliente in clientes %}
+                            <option value="{{ cliente.id }}">{{ cliente.empresa }} ({{ cliente.nombre }})</option>
                             {% endfor %}
                         </select>
                     </div>
-                    {% endif %}
+                </div>
+                
+                {% if current_user.rol.nombre == 'Administrador' %}
+                <div class="mb-3">
+                    <label for="responsable_id" class="form-label text-dark-emphasis fw-semibold small">Arquitecto Manager Responsable</label>
+                    <select class="form-select bg-white py-2" id="responsable_id" name="responsable_id" required>
+                        {% for manager in managers %}
+                        <option value="{{ manager.id }}">{{ manager.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm bg-white h-100">
+            <div class="card-body p-4 p-md-5 d-flex flex-column">
+                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-geo-alt-fill text-danger me-2"></i>Geolocalización del Terreno u Obra</h5>
+                
+                <div class="row g-2 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label text-dark-emphasis fw-semibold small">País</label>
+                        <input type="text" class="form-control form-control-sm bg-white" name="pais" required value="Bolivia">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-dark-emphasis fw-semibold small">Departamento</label>
+                        <input type="text" class="form-control form-control-sm bg-white" name="departamento" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-dark-emphasis fw-semibold small">Municipio</label>
+                        <input type="text" class="form-control form-control-sm bg-white" name="municipio" required>
+                    </div>
+                </div>
+                
+                <div class="row g-2 mb-3">
+                    <div class="col-md-5">
+                        <label class="form-label text-dark-emphasis fw-semibold small">Zona / Barrio</label>
+                        <input type="text" class="form-control form-control-sm bg-white" name="zona" required>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label text-dark-emphasis fw-semibold small">Calle / Avenida</label>
+                        <input type="text" class="form-control form-control-sm bg-white" name="calle" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label text-dark-emphasis fw-semibold small">Número</label>
+                        <input type="text" class="form-control form-control-sm bg-white" name="numero" required>
+                    </div>
+                </div>
+                
+                <div class="text-secondary small mb-2"><i class="bi bi-info-circle-fill text-danger me-1"></i> Haz clic en el plano para fijar las coordenadas precisas de la obra:</div>
+                <div id="mapa" class="border rounded-3 flex-grow-1 mb-3" style="min-height: 220px; background-color: #eee;"></div>
+                
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label small text-secondary mb-0">Latitud</label>
+                        <input type="text" class="form-control form-control-sm bg-white" id="latitud" name="latitud" readonly required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-secondary mb-0">Longitud</label>
+                        <input type="text" class="form-control form-control-sm bg-white" id="longitud" name="longitud" readonly required>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header bg-secondary text-white">Geolocalización del Terreno u Obra</div>
-                <div class="card-body d-flex flex-column">
-                    <div class="row mb-2">
-                        <div class="col-md-4">
-                            <label class="form-label">País</label>
-                            <input type="text" class="form-control form-control-sm" name="pais" required value="Bolivia">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Departamento</label>
-                            <input type="text" class="form-control form-control-sm" name="departamento" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Municipio</label>
-                            <input type="text" class="form-control form-control-sm" name="municipio" required>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-5">
-                            <label class="form-label">Zona / Barrio</label>
-                            <input type="text" class="form-control form-control-sm" name="zona" required>
-                        </div>
-                        <div class="col-md-5">
-                            <label class="form-label">Calle / Avenida</label>
-                            <input type="text" class="form-control form-control-sm" name="calle" required>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Número</label>
-                            <input type="text" class="form-control form-control-sm" name="numero" required>
-                        </div>
-                    </div>
-                    
-                    <div class="text-muted small mb-2">Haz clic en el plano para fijar las coordenadas precisas de la obra:</div>
-                    <div id="mapa" class="border flex-grow-1 mb-3" style="min-height: 220px; background-color: #eee;"></div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label class="form-label small mb-0">Latitud</label>
-                            <input type="text" class="form-control form-control-sm" id="latitud" name="latitud" readonly required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small mb-0">Longitud</label>
-                            <input type="text" class="form-control form-control-sm" id="longitud" name="longitud" readonly required>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-12 d-flex justify-content-between">
-            <a href="{{ url_for('proyectos.index') }}" class="btn btn-secondary">Cancelar</a>
-            <button type="submit" class="btn btn-success">Guardar Proyecto Integral</button>
-        </div>
-    </form>
-</div>
+    <div class="col-md-12 d-flex justify-content-between align-items-center mt-4">
+        <a href="{{ url_for('proyectos.index') }}" class="btn btn-outline-secondary fw-bold px-4 py-2 rounded-3">Cancelar</a>
+        <button type="submit" class="btn btn-danger fw-bold px-4 py-2 rounded-3 shadow-sm">Guardar Proyecto Integral</button>
+    </div>
+</form>
 
 <script>
     // Inicialización del mapa apuntando a coordenadas base configurables

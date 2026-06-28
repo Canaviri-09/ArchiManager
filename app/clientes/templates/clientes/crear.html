@@ -1,37 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Registrar Nuevo Cliente</h4>
-            </div>
-            <div class="card-body">
+<div class="row justify-content-center py-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="card border-0 shadow-sm bg-white rounded-3">
+            <div class="card-body p-4 p-md-5">
+                <div class="mb-4">
+                    <h3 class="fw-bold text-dark mb-1"><i class="bi bi-person-plus-fill text-danger me-2"></i>Registrar Nuevo Cliente</h3>
+                    <p class="text-secondary small">Crea una nueva ficha cliente de forma centralizada en el sistema</p>
+                </div>
                 <form method="POST">
                     <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre Completo / Contacto</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        <label for="nombre" class="form-label text-dark-emphasis fw-semibold small">Nombre Completo / Contacto</label>
+                        <input type="text" class="form-control bg-white py-2" id="nombre" name="nombre" required placeholder="Ej: Juan Pérez">
                     </div>
                     <div class="mb-3">
-                        <label for="empresa" class="form-label">Empresa / Razón Social</label>
-                        <input type="text" class="form-control" id="empresa" name="empresa" required>
+                        <label for="empresa" class="form-label text-dark-emphasis fw-semibold small">Empresa / Razón Social</label>
+                        <input type="text" class="form-control bg-white py-2" id="empresa" name="empresa" required placeholder="Ej: Constructora Alfa S.A.">
                     </div>
                     <div class="mb-3">
-                        <label for="telefono" class="form-label">Teléfono</label>
-                        <input type="text" class="form-control" id="telefono" name="telefono" required>
+                        <label for="telefono" class="form-label text-dark-emphasis fw-semibold small">Teléfono de Contacto</label>
+                        <input type="text" class="form-control bg-white py-2" id="telefono" name="telefono" required placeholder="Ej: +591 70000000">
                     </div>
                     <div class="mb-3">
-                        <label for="correo" class="form-label">Correo Electrónico</label>
-                        <input type="email" class="form-control" id="correo" name="correo" required>
+                        <label for="correo" class="form-label text-dark-emphasis fw-semibold small">Correo Electrónico</label>
+                        <input type="email" class="form-control bg-white py-2" id="correo" name="correo" required placeholder="correo@empresa.com">
                     </div>
-                    <div class="mb-3">
-                        <label for="nit" class="form-label">NIT / Identificación Fiscal</label>
-                        <input type="text" class="form-control" id="nit" name="nit" required>
+                    <div class="mb-4">
+                        <label for="nit" class="form-label text-dark-emphasis fw-semibold small">NIT / Identificación Fiscal</label>
+                        <input type="text" class="form-control bg-white py-2" id="nit" name="nit" required placeholder="Ej: 123456027">
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ url_for('clientes.index') }}" class="btn btn-secondary">Cancelar</a>
-                        <button type="submit" class="btn btn-success">Guardar Cliente</button>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a href="{{ url_for('clientes.index') }}" class="btn btn-outline-secondary fw-bold px-4 py-2 rounded-3">Cancelar</a>
+                        <button type="submit" class="btn btn-danger fw-bold px-4 py-2 rounded-3 shadow-sm">Guardar Cliente</button>
                     </div>
                 </form>
             </div>

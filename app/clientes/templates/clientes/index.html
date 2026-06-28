@@ -1,62 +1,79 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Gestión de Clientes</h2>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-5">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">Gestión de Clientes</h2>
+        <p class="text-secondary mb-0">Listado y administración de cuentas comerciales</p>
+    </div>
     {% if current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
-    <a href="{{ url_for('clientes.crear') }}" class="btn btn-primary">Nuevo Cliente</a>
+    <a href="{{ url_for('clientes.crear') }}" class="btn btn-danger fw-bold px-4 py-2 rounded-3 shadow-sm">
+        <i class="bi bi-person-plus-fill me-2"></i>Nuevo Cliente
+    </a>
     {% endif %}
 </div>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="GET" action="{{ url_for('clientes.index') }}" class="row g-2">
+<div class="card border-0 shadow-sm bg-white mb-5">
+    <div class="card-body p-4">
+        <form method="GET" action="{{ url_for('clientes.index') }}" class="row g-3 align-items-center">
             <div class="col-md-9">
-                <input type="text" name="buscar" class="form-control" placeholder="Buscar por nombre, empresa o NIT..." value="{{ buscar }}">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0 text-secondary"><i class="bi bi-search"></i></span>
+                    <input type="text" name="buscar" class="form-control bg-light border-0 py-2" placeholder="Buscar por nombre, empresa o NIT..." value="{{ buscar }}">
+                </div>
             </div>
             <div class="col-md-3 d-grid">
-                <button type="submit" class="btn btn-secondary">Buscar</button>
+                <button type="submit" class="btn btn-dark fw-bold py-2 rounded-3">Buscar</button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="table-responsive">
-    <table class="table table-striped table-hover align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Empresa</th>
-                <th>Teléfono</th>
-                <th>Correo</th>
-                <th>NIT</th>
-                {% if current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
-                <th>Acciones</th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for cliente in clientes %}
-            <tr>
-                <td>{{ cliente.id }}</td>
-                <td>{{ cliente.nombre }}</td>
-                <td>{{ cliente.empresa }}</td>
-                <td>{{ cliente.telefono }}</td>
-                <td>{{ cliente.correo }}</td>
-                <td>{{ cliente.nit }}</td>
-                {% if current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
-                <td>
-                    <a href="{{ url_for('clientes.editar', id=cliente.id) }}" class="btn btn-sm btn-warning">Editar</a>
-                </td>
-                {% endif %}
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="7" class="text-center text-muted">No se encontraron clientes registrados.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card border-0 shadow-sm bg-white">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="border-0 py-3 ps-4 text-secondary small text-uppercase fw-bold">ID</th>
+                        <th class="border-0 py-3 text-secondary small text-uppercase fw-bold">Nombre</th>
+                        <th class="border-0 py-3 text-secondary small text-uppercase fw-bold">Empresa</th>
+                        <th class="border-0 py-3 text-secondary small text-uppercase fw-bold">Teléfono</th>
+                        <th class="border-0 py-3 text-secondary small text-uppercase fw-bold">Correo</th>
+                        <th class="border-0 py-3 text-secondary small text-uppercase fw-bold">NIT</th>
+                        {% if current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
+                        <th class="border-0 py-3 pe-4 text-secondary small text-uppercase fw-bold text-end">Acciones</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cliente in clientes %}
+                    <tr>
+                        <td class="py-3 ps-4 text-secondary">{{ cliente.id }}</td>
+                        <td class="py-3 fw-bold text-dark">{{ cliente.nombre }}</td>
+                        <td class="py-3 text-dark-emphasis fw-semibold">{{ cliente.empresa }}</td>
+                        <td class="py-3">{{ cliente.telefono }}</td>
+                        <td class="py-3">{{ cliente.correo }}</td>
+                        <td class="py-3"><code class="text-secondary">{{ cliente.nit }}</code></td>
+                        {% if current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
+                        <td class="py-3 pe-4 text-end">
+                            <a href="{{ url_for('clientes.editar', id=cliente.id) }}" class="btn btn-sm btn-outline-danger fw-bold rounded-3 px-3 py-1">
+                                <i class="bi bi-pencil-square me-1"></i>Editar
+                            </a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center text-secondary py-5">
+                            <i class="bi bi-people fs-1 text-secondary mb-3 d-block"></i>
+                            No se encontraron clientes registrados.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

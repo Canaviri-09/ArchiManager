@@ -1,50 +1,52 @@
 {% extends 'base.html' %}
-{% block title %}Editar Usuario{% endblock %}
+{% block title %}Editar Usuario - ArchiManager{% endblock %}
 {% block content %}
 
-<div class="d-flex justify-content-center">
-    <div class="card" style="max-width: 520px; width: 100%;">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0">Editar Usuario</h5>
-        </div>
-        <div class="card-body">
+<div class="d-flex justify-content-center align-items-center py-4">
+    <div class="card border-0 shadow-sm bg-white rounded-3" style="max-width: 540px; width: 100%;">
+        <div class="card-body p-4 p-md-5">
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark mb-1"><i class="bi bi-pencil-square text-danger me-2"></i>Editar Usuario</h3>
+                <p class="text-secondary small">Actualiza las credenciales y accesos de la cuenta</p>
+            </div>
+            
             <form method="POST">
                 <div class="mb-3">
-                    <label class="form-label">Nombre completo</label>
-                    <input type="text" name="nombre" class="form-control" value="{{ usuario.nombre }}" required>
+                    <label class="form-label text-dark-emphasis fw-semibold small">Nombre completo</label>
+                    <input type="text" name="nombre" class="form-control bg-white py-2" value="{{ usuario.nombre }}" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Correo</label>
-                    <input type="email" name="correo" class="form-control" value="{{ usuario.correo }}" required>
+                    <label class="form-label text-dark-emphasis fw-semibold small">Correo</label>
+                    <input type="email" name="correo" class="form-control bg-white py-2" value="{{ usuario.correo }}" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Nueva contraseña</label>
-                    <input type="password" name="password" class="form-control" placeholder="Dejar en blanco para no cambiarla">
+                    <label class="form-label text-dark-emphasis fw-semibold small">Nueva contraseña</label>
+                    <input type="password" name="password" class="form-control bg-white py-2" placeholder="Dejar en blanco para no cambiarla">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Rol</label>
-                    <select name="rol_id" class="form-select" required>
+                    <label class="form-label text-dark-emphasis fw-semibold small">Rol</label>
+                    <select name="rol_id" class="form-select bg-white py-2" required>
                         {% for rol in roles %}
                             <option value="{{ rol.id }}" {% if usuario.rol_id == rol.id %}selected{% endif %}>{{ rol.nombre }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Especialidad (opcional)</label>
-                    <select name="especialidad_id" class="form-select">
+                    <label class="form-label text-dark-emphasis fw-semibold small">Especialidad (opcional)</label>
+                    <select name="especialidad_id" class="form-select bg-white py-2">
                         <option value="">Sin especialidad</option>
                         {% for especialidad in especialidades %}
                             <option value="{{ especialidad.id }}" {% if usuario.especialidad_id == especialidad.id %}selected{% endif %}>{{ especialidad.nombre }} ({{ especialidad.tipo }})</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="form-check mb-3">
+                <div class="form-check mb-4">
                     <input type="checkbox" name="activo" class="form-check-input" id="activo" {% if usuario.activo %}checked{% endif %}>
-                    <label class="form-check-label" for="activo">Usuario activo</label>
+                    <label class="form-check-label text-dark-emphasis small fw-medium" for="activo">Usuario activo</label>
                 </div>
-                <div class="d-flex justify-content-between">
-                    <a href="{{ url_for('usuarios.listar') }}" class="btn btn-outline-secondary">Cancelar</a>
-                    <button type="submit" class="btn btn-dark">Guardar Cambios</button>
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{{ url_for('usuarios.listar') }}" class="btn btn-outline-secondary fw-bold px-4 py-2 rounded-3">Cancelar</a>
+                    <button type="submit" class="btn btn-danger fw-bold px-4 py-2 rounded-3 shadow-sm">Guardar Cambios</button>
                 </div>
             </form>
         </div>

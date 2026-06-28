@@ -1,39 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12 mb-4">
-        <h2>Centro de Control Documental y Versionado</h2>
-        <p class="text-muted">Selecciona un proyecto arquitectónico para gestionar sus planos, renders y expedientes técnicos.</p>
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h2 class="fw-bold text-dark mb-1">Centro de Control Documental y Versionado</h2>
+        <p class="text-secondary mb-0">Gestiona planos, renders y expedientes técnicos de tus proyectos activos</p>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-header bg-dark text-white">Proyectos Disponibles</div>
-            <div class="list-group list-group-flush">
-                {% for p in proyectos %}
-                <a href="{{ url_for('documentos.index', proyecto_id=p.id) }}" class="list-group-item list-group-item-action {% if proyecto_seleccionado and proyecto_seleccionado.id == p.id %}active{% endif %}">
-                    <strong>{{ p.codigo }}</strong> - {{ p.nombre }}
-                </a>
-                {% else %}
-                <div class="p-3 text-muted text-center">No posees proyectos asignados para gestión.</div>
-                {% endfor %}
+<div class="row g-4">
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm bg-white">
+            <div class="card-body p-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-buildings-fill text-danger me-2"></i>Proyectos</h5>
+                <div class="list-group list-group-flush gap-2">
+                    {% for p in proyectos %}
+                    <a href="{{ url_for('documentos.index', proyecto_id=p.id) }}" class="list-group-item list-group-item-action border-0 rounded-3 py-3 px-3 {% if proyecto_seleccionado and proyecto_seleccionado.id == p.id %}bg-danger text-white fw-bold shadow-sm{% else %}bg-light text-dark-emphasis fw-semibold{% endif %}">
+                        <span class="d-block small {% if proyecto_seleccionado and proyecto_seleccionado.id == p.id %}text-white-50{% else %}text-secondary{% endif %} mb-1">{{ p.codigo }}</span>
+                        {{ p.nombre }}
+                    </a>
+                    {% else %}
+                    <div class="p-3 text-secondary text-center">
+                        <i class="bi bi-folder-x fs-2 d-block mb-2"></i>
+                        No posees proyectos asignados para gestión.
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-8">
+    <div class="col-lg-8">
         {% if proyecto_seleccionado %}
         
-        <div class="card mb-4">
-            <div class="card-header bg-secondary text-white">Subir Expediente o Actualizar Plano: {{ proyecto_seleccionado.nombre }}</div>
-            <div class="card-body">
+        <div class="card border-0 shadow-sm bg-white mb-4">
+            <div class="card-body p-4 p-md-5">
+                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-cloud-arrow-up-fill text-danger me-2"></i>Subir Expediente o Actualizar Plano: <span class="text-danger">{{ proyecto_seleccionado.nombre }}</span></h5>
                 <form action="{{ url_for('documentos.subir', proyecto_id=proyecto_seleccionado.id) }}" method="POST" enctype="multipart/form-data" class="row g-3">
                     <div class="col-md-6">
-                        <label for="tipo_archivo" class="form-label">Categoría del Documento</label>
-                        <select class="form-select" id="tipo_archivo" name="tipo_archivo" required>
+                        <label for="tipo_archivo" class="form-label text-dark-emphasis fw-semibold small">Categoría del Documento</label>
+                        <select class="form-select bg-white py-2" id="tipo_archivo" name="tipo_archivo" required>
                             <option value="Plano Arquitectónico">Plano Arquitectónico</option>
                             <option value="Plano Estructural">Plano Estructural</option>
                             <option value="Plano de Instalaciones">Plano de Instalaciones</option>
@@ -43,63 +49,79 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for="archivo_tecnico" class="form-label">Seleccionar Archivo (Cualquier formato)</label>
-                        <input class="form-control" type="file" id="archivo_tecnico" name="archivo_tecnico" required>
+                        <label for="archivo_tecnico" class="form-label text-dark-emphasis fw-semibold small">Seleccionar Archivo</label>
+                        <input class="form-control bg-white py-2" type="file" id="archivo_tecnico" name="archivo_tecnico" required>
                     </div>
-                    <div class="col-12 text-end">
-                        <button type="submit" class="btn btn-success">Procesar Archivo Seguro</button>
+                    <div class="col-12 text-end mt-4">
+                        <button type="submit" class="btn btn-danger fw-bold px-4 py-2 rounded-3 shadow-sm">Procesar Archivo Seguro</button>
                     </div>
                 </form>
-                <div class="form-text text-muted small mt-2">Nota: Si subes un archivo con el mismo nombre que uno existente, ArchiManager creará una nueva versión automáticamente conservando el archivo histórico.</div>
+                <div class="form-text text-secondary small mt-3">
+                    <i class="bi bi-info-circle me-1"></i> **Nota**: Si subes un archivo con el mismo nombre que uno existente, ArchiManager creará una nueva versión automáticamente conservando el archivo histórico.
+                </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header bg-dark text-white">Archivos Técnicos Vigentes</div>
-            <div class="table-responsive">
-                <table class="table table-striped align-middle mb-0">
-                    <thead class="table-secondary">
-                        <tr>
-                            <th>Archivo Original</th>
-                            <th>Categoría</th>
-                            <th>Versión</th>
-                            <th>Subido Por</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for doc in documentos %}
-                        <tr>
-                            <td>{{ doc.nombre }}</td>
-                            <td><span class="badge bg-info text-dark">{{ doc.tipo }}</span></td>
-                            <td><span class="badge bg-secondary">v{{ doc.version_actual }}</span></td>
-                            <td>{{ doc.autor.nombre if doc.autor else "Sistema" }}</td>
-                            <td style="white-space: nowrap;">
-                                <a href="{{ url_for('static', filename=doc.url) }}" target="_blank" class="btn btn-sm btn-outline-dark">Descargar</a>
-                                
-                                {% if doc.usuario_id == current_user.id or current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
-                                <form action="{{ url_for('documentos.eliminar', id=doc.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Confirmas que deseas remover este archivo técnico del proyecto?');">
-                                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-                                </form>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="5" class="text-center text-muted p-4">No existen planos o renders cargados en este proyecto.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <div class="card border-0 shadow-sm bg-white">
+            <div class="card-body p-4 p-md-5">
+                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-files text-danger me-2"></i>Archivos Técnicos Vigentes</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0 py-3 text-secondary small text-uppercase fw-bold">Archivo Original</th>
+                                <th class="border-0 py-3 text-secondary small text-uppercase fw-bold">Categoría</th>
+                                <th class="border-0 py-3 text-secondary small text-uppercase fw-bold">Versión</th>
+                                <th class="border-0 py-3 text-secondary small text-uppercase fw-bold">Subido Por</th>
+                                <th class="border-0 py-3 text-secondary small text-uppercase fw-bold text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doc in documentos %}
+                            <tr>
+                                <td class="py-3 fw-semibold text-dark-emphasis">{{ doc.nombre }}</td>
+                                <td class="py-3">
+                                    <span class="badge rounded-pill bg-light text-dark-emphasis border px-3 py-1">{{ doc.tipo }}</span>
+                                </td>
+                                <td class="py-3">
+                                    <span class="badge bg-secondary-subtle text-secondary px-3 py-1 rounded-pill border border-secondary-subtle">v{{ doc.version_actual }}</span>
+                                </td>
+                                <td class="py-3 text-secondary small">{{ doc.autor.nombre if doc.autor else "Sistema" }}</td>
+                                <td class="py-3 text-end" style="white-space: nowrap;">
+                                    <a href="{{ url_for('static', filename=doc.url) }}" target="_blank" class="btn btn-sm btn-outline-danger fw-bold rounded-3 px-3 py-1">
+                                        <i class="bi bi-download me-1"></i>Descargar
+                                    </a>
+                                    
+                                    {% if doc.usuario_id == current_user.id or current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
+                                    <form action="{{ url_for('documentos.eliminar', id=doc.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Confirmas que deseas remover este archivo técnico del proyecto?');">
+                                        <button type="submit" class="btn btn-sm btn-link text-secondary fw-bold text-decoration-none ms-2">
+                                            <i class="bi bi-trash3 me-1"></i>Eliminar
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center text-secondary py-5">
+                                    <i class="bi bi-file-earmark-x fs-1 text-secondary mb-3 d-block"></i>
+                                    No existen planos o renders cargados en este proyecto.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
         {% else %}
-        <div class="alert alert-secondary text-center p-5" role="alert">
-            <h4 class="alert-heading">Explorador Documental Cerrado</h4>
-            <p class="mb-0">Por favor, selecciona un proyecto de la lista izquierda para visualizar su bóveda de archivos y el árbol de versiones.</p>
+        <div class="card border-0 shadow-sm bg-white py-5 text-center">
+            <div class="card-body p-5">
+                <i class="bi bi-folder-symlink fs-1 text-danger mb-4 d-block"></i>
+                <h4 class="fw-bold text-dark mb-2">Explorador Documental Cerrado</h4>
+                <p class="text-secondary max-width-md mx-auto mb-0">Selecciona un proyecto de la lista de la izquierda para visualizar su bóveda de archivos y el historial de versiones.</p>
+            </div>
         </div>
         {% endif %}
     </div>

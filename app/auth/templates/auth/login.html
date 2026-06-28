@@ -1,22 +1,27 @@
 {% extends 'base.html' %}
-{% block title %}Login{% endblock %}
+{% block title %}Iniciar Sesión - ArchiManager{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-center">
-    <div class="card" style="max-width: 420px; width: 100%;">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0">Inicio de sesión</h5>
-        </div>
-        <div class="card-body">
+<div class="d-flex justify-content-center align-items-center py-5">
+    <div class="card border-0 shadow-sm bg-white rounded-3" style="max-width: 440px; width: 100%;">
+        <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-4">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="ArchiManager" height="42" class="mb-3 bg-white px-2 py-1 rounded shadow-sm">
+                <h4 class="fw-bold text-dark mb-1">Inicio de Sesión</h4>
+                <p class="text-secondary small">Panel de control y gestión arquitectónica</p>
+            </div>
+            
             <form method="POST">
                 <div class="mb-3">
-                    <label class="form-label">Correo</label>
-                    <input type="email" name="correo" class="form-control" required>
+                    <label class="form-label text-dark-emphasis fw-semibold small">Correo Electrónico</label>
+                    <input type="email" name="correo" class="form-control bg-white py-2" required placeholder="correo@ejemplo.com">
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" name="password" class="form-control" required>
+                <div class="mb-4">
+                    <label class="form-label text-dark-emphasis fw-semibold small">Contraseña</label>
+                    <input type="password" name="password" class="form-control bg-white py-2" required placeholder="••••••••">
                 </div>
-                <button type="submit" class="btn btn-dark w-100">Iniciar sesión</button>
+                <button type="submit" class="btn btn-danger w-100 fw-bold py-2 rounded-3 shadow-sm">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                </button>
             </form>
         </div>
     </div>

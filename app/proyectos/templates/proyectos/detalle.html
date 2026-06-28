@@ -4,33 +4,72 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<div class="row mb-4">
+<div class="row mb-5">
     <div class="col-md-12">
-        <h2>Proyecto: {{ proyecto.nombre }} ({{ proyecto.codigo }})</h2>
-        <hr>
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+            <div>
+                <h2 class="fw-bold text-dark mb-1">{{ proyecto.nombre }}</h2>
+                <p class="text-secondary mb-0">Código del Proyecto: <strong class="text-dark">{{ proyecto.codigo }}</strong></p>
+            </div>
+            <div>
+                {% if proyecto.estado == 'Diseño' %}
+                    <span class="badge rounded-pill bg-info-subtle text-info px-4 py-2 border border-info-subtle fw-bold fs-7">{{ proyecto.estado }}</span>
+                {% elif proyecto.estado == 'Construcción' %}
+                    <span class="badge rounded-pill bg-warning-subtle text-warning px-4 py-2 border border-warning-subtle fw-bold fs-7">{{ proyecto.estado }}</span>
+                {% elif proyecto.estado == 'Concluido' %}
+                    <span class="badge rounded-pill bg-success-subtle text-success px-4 py-2 border border-success-subtle fw-bold fs-7">{{ proyecto.estado }}</span>
+                {% else %}
+                    <span class="badge rounded-pill bg-danger-subtle text-danger px-4 py-2 border border-danger-subtle fw-bold fs-7">{{ proyecto.estado }}</span>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-7 mb-4">
-        <div class="card mb-4">
-            <div class="card-header bg-dark text-white">Ficha de Información General</div>
-            <div class="card-body">
-                <p><strong>Descripción:</strong> {{ proyecto.descripcion }}</p>
-                <p><strong>Presupuesto General:</strong> ${{ "{:,.2f}".format(proyecto.presupuesto) }} USD</p>
-                <p><strong>Estado Actual de Obra:</strong> {{ proyecto.estado }}</p>
-                <p><strong>Cliente Mandante:</strong> {{ proyecto.cliente.empresa }} (Contacto: {{ proyecto.cliente.nombre }})</p>
-                <p><strong>Arquitecto Responsable:</strong> {{ proyecto.responsable.nombre }}</p>
-                <p><strong>Porcentaje de Avance Físico:</strong> {{ proyecto.avance_actual }}%</p>
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm bg-white mb-4">
+            <div class="card-body p-4 p-md-5">
+                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-info-circle-fill text-danger me-2"></i>Información General</h5>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <span class="text-secondary small fw-semibold">Descripción del Proyecto</span>
+                        <p class="text-dark mb-0">{{ proyecto.descripcion }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-secondary small fw-semibold">Cliente Mandante</span>
+                        <p class="text-dark fw-bold mb-0">{{ proyecto.cliente.empresa }}</p>
+                        <span class="text-muted small">Contacto: {{ proyecto.cliente.nombre }}</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-secondary small fw-semibold">Arquitecto Responsable</span>
+                        <p class="text-dark mb-0">{{ proyecto.responsable.nombre }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-secondary small fw-semibold">Presupuesto General</span>
+                        <p class="text-dark mb-0 fw-bold">${{ "{:,.2f}".format(proyecto.presupuesto) }} USD</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-secondary small fw-semibold">Progreso Físico Actual</span>
+                        <div class="d-flex align-items-center mt-1">
+                            <span class="fw-bold text-danger me-2">{{ proyecto.avance_actual }}%</span>
+                            <div class="progress w-100 rounded-pill bg-light" style="height: 8px;">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: {{ proyecto.avance_actual }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         {% if proyecto.ubicacion %}
-        <div class="card">
-            <div class="card-header bg-secondary text-white">Ubicación Registrada de la Obra</div>
-            <div class="card-body">
-                <p><strong>Dirección:</strong> {{ proyecto.ubicacion.calle }} N°{{ proyecto.ubicacion.numero }}, Zona {{ proyecto.ubicacion.zona }} ({{ proyecto.ubicacion.municipio }} - {{ proyecto.ubicacion.departamento }})</p>
-                <div id="mapa-detalle" class="border" style="height: 250px;"></div>
+        <div class="card border-0 shadow-sm bg-white">
+            <div class="card-body p-4 p-md-5">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-geo-alt-fill text-danger me-2"></i>Ubicación y Emplazamiento</h5>
+                <p class="text-secondary small mb-3">
+                    <strong>Dirección:</strong> {{ proyecto.ubicacion.calle }} N°{{ proyecto.ubicacion.numero }}, Zona {{ proyecto.ubicacion.zona }} ({{ proyecto.ubicacion.municipio }} - {{ proyecto.ubicacion.departamento }})
+                </p>
+                <div id="mapa-detalle" class="border rounded-3" style="height: 250px;"></div>
             </div>
         </div>
         <script>
@@ -42,117 +81,129 @@
         {% endif %}
     </div>
 
-    <div class="col-md-5 mb-4">
-        <div class="card">
-            <div class="card-header bg-primary text-white">Equipo Técnico Asignado</div>
-            <div class="card-body">
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm bg-white h-100">
+            <div class="card-body p-4 p-md-5">
+                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-people-fill text-danger me-2"></i>Equipo Técnico Asignado</h5>
+                
                 {% if current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
-                <form action="{{ url_for('proyectos.asignar_equipo', proyecto_id=proyecto.id) }}" method="POST" class="border p-2 mb-3 bg-light row g-2">
-                    <div class="col-12">
-                        <label class="form-label small mb-0 fw-bold">Asignar Nuevo Integrante</label>
-                        <select name="usuario_id" class="form-select form-select-sm" required>
-                            <option value="">Seleccionar profesional...</option>
-                            {% for t in tecnicos %}
-                            <option value="{{ t.id }}">{{ t.nombre }} ({% if t.especialidad %}{{ t.especialidad.nombre }}{% else %}{{ t.rol.nombre }}{% endif %})</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-12">
-                        <label class="form-label small mb-0 fw-bold">Función Específica en este Proyecto</label>
-                        <input type="text" name="funcion" class="form-control form-control-sm" required placeholder="Ej: Calculista, Diseñador de Interiores">
-                    </div>
-                    <div class="col-12 d-grid">
-                        <button type="submit" class="btn btn-sm btn-success">Agregar al Equipo</button>
-                    </div>
-                </form>
+                <div class="p-4 rounded-3 bg-light mb-4">
+                    <h6 class="fw-bold text-dark-emphasis mb-3">Asignar Integrante</h6>
+                    <form action="{{ url_for('proyectos.asignar_equipo', proyecto_id=proyecto.id) }}" method="POST" class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small mb-1 fw-semibold text-secondary">Profesional</label>
+                            <select name="usuario_id" class="form-select bg-white form-select-sm" required>
+                                <option value="">Seleccionar...</option>
+                                {% for t in tecnicos %}
+                                <option value="{{ t.id }}">{{ t.nombre }} ({% if t.especialidad %}{{ t.especialidad.nombre }}{% else %}{{ t.rol.nombre }}{% endif %})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small mb-1 fw-semibold text-secondary">Función en el Proyecto</label>
+                            <input type="text" name="funcion" class="form-control bg-white form-control-sm" required placeholder="Ej: Calculista, Diseñador de Interiores">
+                        </div>
+                        <div class="col-12 d-grid">
+                            <button type="submit" class="btn btn-sm btn-danger fw-bold rounded-3">Agregar al Equipo</button>
+                        </div>
+                    </form>
+                </div>
                 {% endif %}
 
-                <table class="table table-sm table-bordered mt-2">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Especialidad</th>
-                            <th>Función Asignada</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{ proyecto.responsable.nombre }}</td>
-                            <td>Gestión de Proyectos</td>
-                            <td><span class="text-muted">Responsable Principal</span></td>
-                        </tr>
-                        {% for miembro in proyecto.equipos %}
-                        <tr>
-                            <td>{{ miembro.usuario.nombre }}</td>
-                            <td>
-                                {% if miembro.usuario.especialidad %}
-                                    {{ miembro.usuario.especialidad.nombre }}
-                                {% else %}
-                                    General
-                                {% endif %}
-                            </td>
-                            <td>{{ miembro.funcion }}</td>
-                        </tr>
-                        {% else %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0 text-secondary small py-2">Nombre</th>
+                                <th class="border-0 text-secondary small py-2">Especialidad</th>
+                                <th class="border-0 text-secondary small py-2">Función</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-3 fw-semibold">{{ proyecto.responsable.nombre }}</td>
+                                <td class="py-3">Gestión de Proyectos</td>
+                                <td class="py-3"><span class="text-secondary small">Responsable Principal</span></td>
+                            </tr>
+                            {% for miembro in proyecto.equipos %}
+                            <tr>
+                                <td class="py-3 fw-semibold">{{ miembro.usuario.nombre }}</td>
+                                <td class="py-3">
+                                    {% if miembro.usuario.especialidad %}
+                                        {{ miembro.usuario.especialidad.nombre }}
+                                    {% else %}
+                                        General
+                                    {% endif %}
+                                </td>
+                                <td class="py-3 text-secondary small">{{ miembro.funcion }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<div class="row mt-4">
+
+<div class="row mt-5">
     <div class="col-md-12">
-        <div class="card">
-            <div class="card-header bg-success text-white">Cronología de Avances y Bitácora de Obra</div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 border-end">
-                        <h5>Registrar Nuevo Reporte</h5>
-                        <form action="{{ url_for('proyectos.registrar_avance', proyecto_id=proyecto.id) }}" method="POST">
-                            <div class="mb-3">
-                                <label for="porcentaje" class="form-label">Porcentaje de Avance Logrado (0-100%)</label>
-                                <input type="number" min="0" max="100" class="form-control" id="porcentaje" name="porcentaje" required value="{{ proyecto.avance_actual }}">
-                                <div class="form-text small text-muted">El indicador general del proyecto pasará a este porcentaje si es mayor.</div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="observacion" class="form-label">Observaciones y Estado en Campo</label>
-                                <textarea class="form-control" id="observacion" name="observacion" rows="3" required placeholder="Escribe el estado de las excavaciones, vaciados, acabados, etc."></textarea>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-success">Guardar en Bitácora</button>
-                            </div>
-                        </form>
+        <div class="card border-0 shadow-sm bg-white">
+            <div class="card-body p-4 p-md-5">
+                <h4 class="fw-bold text-dark mb-4"><i class="bi bi-journals text-danger me-2"></i>Cronología y Bitácora de Obra</h4>
+                <div class="row g-4">
+                    <div class="col-lg-4 border-end-lg">
+                        <div class="pe-lg-3">
+                            <h5 class="fw-bold text-dark mb-3">Registrar Reporte</h5>
+                            <form action="{{ url_for('proyectos.registrar_avance', proyecto_id=proyecto.id) }}" method="POST">
+                                <div class="mb-3">
+                                    <label for="porcentaje" class="form-label text-dark-emphasis fw-semibold small">Avance Logrado (0-100%)</label>
+                                    <input type="number" min="0" max="100" class="form-control bg-white py-2" id="porcentaje" name="porcentaje" required value="{{ proyecto.avance_actual }}">
+                                    <div class="form-text small text-secondary">El porcentaje del proyecto subirá automáticamente si reportas un avance superior.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="observacion" class="form-label text-dark-emphasis fw-semibold small">Observaciones de Campo</label>
+                                    <textarea class="form-control bg-white py-2" id="observacion" name="observacion" rows="4" required placeholder="Describe el estado de excavación, vaciado, acabados..."></textarea>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-danger fw-bold rounded-3 py-2">Guardar en Bitácora</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                     
-                    <div class="col-md-8">
-                        <h5>Historial de Reportes Técnicos</h5>
-                        <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
-                            <table class="table table-sm table-striped">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>Fecha / Hora</th>
-                                        <th>Porcentaje</th>
-                                        <th>Reportado Por</th>
-                                        <th>Observación Técnica</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for avance in proyecto.avances | sort(attribute='fecha', reverse=true) %}
-                                    <tr>
-                                        <td style="white-space: nowrap;">{{ avance.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
-                                        <td><span class="badge bg-success">{{ avance.porcentaje }}%</span></td>
-                                        <td>{{ avance.usuario.nombre }}</td>
-                                        <td>{{ avance.observacion }}</td>
-                                    </tr>
-                                    {% else %}
-                                    <tr>
-                                        <td colspan="4" class="text-center text-muted">No se registran bitácoras de obra para este proyecto.</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                    <div class="col-lg-8">
+                        <div class="ps-lg-3">
+                            <h5 class="fw-bold text-dark mb-3">Historial de Reportes Técnicos</h5>
+                            <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                                <table class="table table-striped align-middle mb-0">
+                                    <thead class="table-light position-sticky top-0">
+                                        <tr>
+                                            <th class="border-0 text-secondary py-2">Fecha / Hora</th>
+                                            <th class="border-0 text-secondary py-2">Porcentaje</th>
+                                            <th class="border-0 text-secondary py-2">Reportado Por</th>
+                                            <th class="border-0 text-secondary py-2">Observación Técnica</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for avance in proyecto.avances | sort(attribute='fecha', reverse=true) %}
+                                        <tr>
+                                            <td class="py-3 text-secondary small" style="white-space: nowrap;">{{ avance.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                                            <td class="py-3"><span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1 rounded-pill fw-bold">{{ avance.porcentaje }}%</span></td>
+                                            <td class="py-3 fw-semibold text-dark-emphasis">{{ avance.usuario.nombre }}</td>
+                                            <td class="py-3 small text-secondary">{{ avance.observacion }}</td>
+                                        </tr>
+                                        {% else %}
+                                        <tr>
+                                            <td colspan="4" class="text-center text-secondary py-5">
+                                                <i class="bi bi-journal-x fs-2 text-secondary mb-2 d-block"></i>
+                                                No se registran bitácoras de obra para este proyecto.
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -160,9 +211,12 @@
         </div>
     </div>
 </div>
-<div class="row mt-2">
+
+<div class="row mt-4">
     <div class="col-md-12">
-        <a href="{{ url_for('proyectos.index') }}" class="btn btn-secondary">Regresar al Listado</a>
+        <a href="{{ url_for('proyectos.index') }}" class="btn btn-outline-secondary fw-bold px-4 py-2 rounded-3">
+            <i class="bi bi-arrow-left me-2"></i>Regresar al Listado
+        </a>
     </div>
 </div>
 {% endblock %}
