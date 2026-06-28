@@ -10,3 +10,4 @@ instance/
 *.log
 node_modules/
 migrations/
+.env
