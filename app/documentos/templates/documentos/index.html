@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h2>Centro de Control Documental y Versionado</h2>
+        <p class="text-muted">Selecciona un proyecto arquitectónico para gestionar sus planos, renders y expedientes técnicos.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">Proyectos Disponibles</div>
+            <div class="list-group list-group-flush">
+                {% for p in proyectos %}
+                <a href="{{ url_for('documentos.index', proyecto_id=p.id) }}" class="list-group-item list-group-item-action {% if proyecto_seleccionado and proyecto_seleccionado.id == p.id %}active{% endif %}">
+                    <strong>{{ p.codigo }}</strong> - {{ p.nombre }}
+                </a>
+                {% else %}
+                <div class="p-3 text-muted text-center">No posees proyectos asignados para gestión.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        {% if proyecto_seleccionado %}
+        
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">Subir Expediente o Actualizar Plano: {{ proyecto_seleccionado.nombre }}</div>
+            <div class="card-body">
+                <form action="{{ url_for('documentos.subir', proyecto_id=proyecto_seleccionado.id) }}" method="POST" enctype="multipart/form-data" class="row g-3">
+                    <div class="col-md-6">
+                        <label for="tipo_archivo" class="form-label">Categoría del Documento</label>
+                        <select class="form-select" id="tipo_archivo" name="tipo_archivo" required>
+                            <option value="Plano Arquitectónico">Plano Arquitectónico</option>
+                            <option value="Plano Estructural">Plano Estructural</option>
+                            <option value="Plano de Instalaciones">Plano de Instalaciones</option>
+                            <option value="Render / Modelo 3D">Render / Modelo 3D</option>
+                            <option value="Memoria de Cálculo">Memoria de Cálculo</option>
+                            <option value="Presupuesto / Planilla">Presupuesto / Planilla</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="archivo_tecnico" class="form-label">Seleccionar Archivo (Cualquier formato)</label>
+                        <input class="form-control" type="file" id="archivo_tecnico" name="archivo_tecnico" required>
+                    </div>
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-success">Procesar Archivo Seguro</button>
+                    </div>
+                </form>
+                <div class="form-text text-muted small mt-2">Nota: Si subes un archivo con el mismo nombre que uno existente, ArchiManager creará una nueva versión automáticamente conservando el archivo histórico.</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-dark text-white">Archivos Técnicos Vigentes</div>
+            <div class="table-responsive">
+                <table class="table table-striped align-middle mb-0">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>Archivo Original</th>
+                            <th>Categoría</th>
+                            <th>Versión</th>
+                            <th>Subido Por</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in documentos %}
+                        <tr>
+                            <td>{{ doc.nombre }}</td>
+                            <td><span class="badge bg-info text-dark">{{ doc.tipo }}</span></td>
+                            <td><span class="badge bg-secondary">v{{ doc.version_actual }}</span></td>
+                            <td>{{ doc.autor.nombre if doc.autor else "Sistema" }}</td>
+                            <td style="white-space: nowrap;">
+                                <a href="{{ url_for('static', filename=doc.url) }}" target="_blank" class="btn btn-sm btn-outline-dark">Descargar</a>
+                                
+                                {% if doc.usuario_id == current_user.id or current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
+                                <form action="{{ url_for('documentos.eliminar', id=doc.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Confirmas que deseas remover este archivo técnico del proyecto?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted p-4">No existen planos o renders cargados en este proyecto.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="alert alert-secondary text-center p-5" role="alert">
+            <h4 class="alert-heading">Explorador Documental Cerrado</h4>
+            <p class="mb-0">Por favor, selecciona un proyecto de la lista izquierda para visualizar su bóveda de archivos y el árbol de versiones.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

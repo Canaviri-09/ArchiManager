@@ -1,0 +1,51 @@
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{{ url_for('dashboard.index') }}">ArchiManager</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.index') }}">Inicio</a></li>
+                    {% if current_user.tiene_rol('Administrador') %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('usuarios.listar') }}">Usuarios</a></li>
+                    {% endif %}
+                    {# Los enlaces a Clientes, Proyectos y Auditoría se activan
+                       a medida que se construyen sus respectivos módulos (Fases 5 a 9). #}
+                    <li class="nav-item ms-lg-3">
+                        <span class="navbar-text text-light me-3">{{ current_user.nombre }}</span>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('clientes.index') }}">Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('proyectos.index') }}">Proyectos</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('contratos.index') }}">Contratos</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('documentos.index') }}">Documentos</a>
+                    </li>
+
+                    {% if current_user.is_authenticated and current_user.rol.nombre == 'Administrador' %}
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" href="{{ url_for('auditoria.index') }}">Auditoría</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Salir</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+<hr class="m-0">

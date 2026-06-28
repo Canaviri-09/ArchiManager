@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="p-4 bg-light rounded-3 border">
+            <h2>ArchiManager, {{ current_user.nombre }}</h2>
+            <p class="lead mb-0">Rol Asignado: <span class="badge bg-dark">{{ rol_usuario }}</span></p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-center bg-dark text-white shadow-sm h-100">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <h6 class="text-uppercase text-muted small">Obras & Proyectos</h6>
+                <h2 class="display-6 fw-bold my-2">{{ total_proyectos }}</h2>
+                <span class="small text-light-50">Registrados en Bóveda</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-center border shadow-sm h-100">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <h6 class="text-uppercase text-muted small">Clientes Vinculados</h6>
+                <h2 class="display-6 fw-bold text-primary my-2">{{ total_clientes }}</h2>
+                <span class="small text-muted">Cuentas Comerciales</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center border shadow-sm h-100">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <h6 class="text-uppercase text-muted small">Cartera Financiera (Presupuesto)</h6>
+                <h3 class="fw-bold text-success my-2">${{ "{:,.2f}".format(presupuesto_total) }}</h3>
+                <span class="small text-muted">Capital Total Asignado</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center border shadow-sm h-100">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <h6 class="text-uppercase text-muted small">Avance Físico Promedio</h6>
+                <h2 class="display-6 fw-bold text-warning my-2">{{ avance_promedio }}%</h2>
+                <div class="progress mx-3" style="height: 6px;">
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: {{ avance_promedio }}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card h-100 border">
+            <div class="card-body text-center">
+                <h6 class="text-uppercase text-muted small">Planos y Archivos Activos</h6>
+                <h3 class="display-6 my-2">{{ total_archivos }}</h3>
+                <p class="text-muted small">Modelos DWG, renders y memorias resguardadas bajo versionado inteligente en el servidor.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card h-100 border">
+            <div class="card-body text-center">
+                <h6 class="text-uppercase text-muted small">Usuarios de la Plataforma</h6>
+                <h3 class="display-6 my-2">{{ total_usuarios }}</h3>
+                <p class="text-muted small">Cuentas profesionales operando concurrentemente bajo controles de auditoría e inicio de sesión seguro.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 bg-light border text-center d-flex align-items-center justify-content-center p-3">
+            <h5>Estado de Infraestructura</h5>
+            <div class="text-success small fw-bold">● Sincronizado con Supabase PostgreSQL</div>
+            <div class="text-muted xsmall mt-1">Almacenamiento Local Híbrido Habilitado</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Resumen y Control de Proyectos en Ejecución</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Código</th>
+                            <th>Proyecto Arquitectónico</th>
+                            <th>Presupuesto Asignado</th>
+                            <th>Responsable Principal</th>
+                            <th>Progreso Real de Obra</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for proyecto in proyectos_recientes %}
+                        <tr>
+                            <td><strong>{{ proyecto.codigo }}</strong></td>
+                            <td>{{ proyecto.nombre }}</td>
+                            <td>${{ "{:,.2f}".format(proyecto.presupuesto) }}</td>
+                            <td>{{ proyecto.responsable.nombre }}</td>
+                            <td style="width: 25%;">
+                                <div class="d-flex align-items-center">
+                                    <span class="me-2 small fw-bold">{{ proyecto.avance_actual }}%</span>
+                                    <div class="progress w-100" style="height: 10px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ proyecto.avance_actual }}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('proyectos.detalle', id=proyecto.id) }}" class="btn btn-sm btn-outline-dark">Gestionar</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted p-4">No se registran obras ni asignaciones activas en tu panel.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

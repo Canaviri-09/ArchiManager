@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2>Bitácora de Auditoría Global del Sistema</h2>
+        <p class="text-muted">Historial cronológico de acciones, operaciones y modificaciones de datos ejecutadas por los usuarios en la plataforma.</p>
+        <hr>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Registro de Actividades Recientes</h5>
+        <span class="badge bg-secondary">{{ bitacora|length }} operaciones registradas</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle mb-0">
+            <thead class="table-secondary">
+                <tr>
+                    <th>Fecha / Hora</th>
+                    <th>Usuario Responsable</th>
+                    <th>Rol</th>
+                    <th>Acción Ejecutada</th>
+                    <th>Tabla Afectada</th>
+                    <th>ID Registro</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registro in bitacora %}
+                <tr>
+                    <td style="white-space: nowrap;">
+                        <strong>{{ registro.fecha.strftime('%d/%m/%Y %H:%M:%S') }}</strong>
+                    </td>
+                    <td>{{ registro.usuario.nombre if registro.usuario else "Sistema / Semillero" }}</td>
+                    <td>
+                        <span class="badge {% if registro.usuario and registro.usuario.rol.nombre == 'Administrador' %}bg-danger{% elif registro.usuario and registro.usuario.rol.nombre == 'Arquitecto Manager' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}">
+                            {{ registro.usuario.rol.nombre if registro.usuario else "N/A" }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="text-uppercase fw-bold text-dark">{{ registro.accion }}</span>
+                    </td>
+                    <td>
+                        <code class="text-primary">{{ registro.tabla_afectada }}</code>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark border">{{ registro.registro_id }}</span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted p-4">No se registran eventos de auditoría en la base de datos de Supabase.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

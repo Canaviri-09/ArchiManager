@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Usuarios{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Listado de Usuarios</h3>
+    <a href="{{ url_for('usuarios.crear') }}" class="btn btn-primary">Nuevo Usuario</a>
+</div>
+
+<form method="GET" class="row g-2 mb-4">
+    <div class="col-auto">
+        <select name="rol_id" class="form-select" onchange="this.form.submit()">
+            <option value="">Todos los roles</option>
+            {% for rol in roles %}
+                <option value="{{ rol.id }}" {% if rol_id_seleccionado == rol.id %}selected{% endif %}>{{ rol.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-auto">
+        <select name="especialidad_id" class="form-select" onchange="this.form.submit()">
+            <option value="">Todas las especialidades</option>
+            {% for especialidad in especialidades %}
+                <option value="{{ especialidad.id }}" {% if especialidad_id_seleccionada == especialidad.id %}selected{% endif %}>{{ especialidad.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% if rol_id_seleccionado or especialidad_id_seleccionada %}
+        <div class="col-auto">
+            <a href="{{ url_for('usuarios.listar') }}" class="btn btn-outline-secondary">Limpiar filtros</a>
+        </div>
+    {% endif %}
+</form>
+
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Especialidad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.id }}</td>
+            <td>{{ usuario.nombre }}</td>
+            <td>{{ usuario.correo }}</td>
+            <td>{{ usuario.rol.nombre }}</td>
+            <td>{{ usuario.especialidad.nombre if usuario.especialidad else '—' }}</td>
+            <td>
+                {% if usuario.activo %}
+                    <span class="badge bg-success">Activo</span>
+                {% else %}
+                    <span class="badge bg-secondary">Inactivo</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ url_for('usuarios.editar', usuario_id=usuario.id) }}" class="btn btn-sm btn-warning">Editar</a>
+                <form method="POST" action="{{ url_for('usuarios.eliminar', usuario_id=usuario.id) }}" class="d-inline" onsubmit="return confirm('¿Eliminar este usuario?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="7" class="text-center text-muted">No hay usuarios para los filtros seleccionados.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

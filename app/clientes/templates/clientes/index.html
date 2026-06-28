@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Gestión de Clientes</h2>
+    {% if current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
+    <a href="{{ url_for('clientes.crear') }}" class="btn btn-primary">Nuevo Cliente</a>
+    {% endif %}
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('clientes.index') }}" class="row g-2">
+            <div class="col-md-9">
+                <input type="text" name="buscar" class="form-control" placeholder="Buscar por nombre, empresa o NIT..." value="{{ buscar }}">
+            </div>
+            <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-secondary">Buscar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Empresa</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>NIT</th>
+                {% if current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
+                <th>Acciones</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.id }}</td>
+                <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.empresa }}</td>
+                <td>{{ cliente.telefono }}</td>
+                <td>{{ cliente.correo }}</td>
+                <td>{{ cliente.nit }}</td>
+                {% if current_user.rol.nombre in ['Administrador', 'Arquitecto Manager'] %}
+                <td>
+                    <a href="{{ url_for('clientes.editar', id=cliente.id) }}" class="btn btn-sm btn-warning">Editar</a>
+                </td>
+                {% endif %}
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center text-muted">No se encontraron clientes registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

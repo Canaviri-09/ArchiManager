@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h2>Registrar Nuevo Proyecto Arquitectónico</h2>
+    </div>
+    
+    <form method="POST" class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-dark text-white">Datos Técnicos del Proyecto</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="codigo" class="form-label">Código Único</label>
+                            <input type="text" class="form-control" id="codigo" name="codigo" required placeholder="Ej: PRY-2026-01">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="estado" class="form-label">Estado Inicial</label>
+                            <select class="form-select" id="estado" name="estado" required>
+                                <option value="Diseño">Diseño</option>
+                                <option value="Construcción">Construcción</option>
+                                <option value="Concluido">Concluido</option>
+                                <option value="Suspendido">Suspendido</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre del Proyecto</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción / Alcance</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="presupuesto" class="form-label">Presupuesto (USD)</label>
+                            <input type="number" step="0.01" class="form-control" id="presupuesto" name="presupuesto" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="cliente_id" class="form-label">Cliente Asociado</label>
+                            <select class="form-select" id="cliente_id" name="cliente_id" required>
+                                <option value="">Seleccione un cliente...</option>
+                                {% for cliente in clientes %}
+                                <option value="{{ cliente.id }}">{{ cliente.empresa }} ({{ cliente.nombre }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    {% if current_user.rol.nombre == 'Administrador' %}
+                    <div class="mb-3">
+                        <label for="responsable_id" class="form-label">Arquitecto Manager Responsable</label>
+                        <select class="form-select" id="responsable_id" name="responsable_id" required>
+                            {% for manager in managers %}
+                            <option value="{{ manager.id }}">{{ manager.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-secondary text-white">Geolocalización del Terreno u Obra</div>
+                <div class="card-body d-flex flex-column">
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                            <label class="form-label">País</label>
+                            <input type="text" class="form-control form-control-sm" name="pais" required value="Bolivia">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Departamento</label>
+                            <input type="text" class="form-control form-control-sm" name="departamento" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Municipio</label>
+                            <input type="text" class="form-control form-control-sm" name="municipio" required>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-5">
+                            <label class="form-label">Zona / Barrio</label>
+                            <input type="text" class="form-control form-control-sm" name="zona" required>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Calle / Avenida</label>
+                            <input type="text" class="form-control form-control-sm" name="calle" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Número</label>
+                            <input type="text" class="form-control form-control-sm" name="numero" required>
+                        </div>
+                    </div>
+                    
+                    <div class="text-muted small mb-2">Haz clic en el plano para fijar las coordenadas precisas de la obra:</div>
+                    <div id="mapa" class="border flex-grow-1 mb-3" style="min-height: 220px; background-color: #eee;"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label small mb-0">Latitud</label>
+                            <input type="text" class="form-control form-control-sm" id="latitud" name="latitud" readonly required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small mb-0">Longitud</label>
+                            <input type="text" class="form-control form-control-sm" id="longitud" name="longitud" readonly required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 d-flex justify-content-between">
+            <a href="{{ url_for('proyectos.index') }}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-success">Guardar Proyecto Integral</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Inicialización del mapa apuntando a coordenadas base configurables
+    var map = L.map('mapa').setView([-16.5000, -68.1500], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    var marker;
+    map.on('click', function(e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+
+        document.getElementById('latitud').value = lat.toFixed(6);
+        document.getElementById('longitud').value = lng.toFixed(6);
+
+        if (marker) {
+            marker.setLatLng(e.latlng);
+        } else {
+            marker = L.marker(e.latlng).addTo(map);
+        }
+    });
+</script>
+{% endblock %}
