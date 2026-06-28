@@ -128,7 +128,7 @@
                                     </div>
                                 </td>
                                 <td class="py-3 text-end">
-                                    <a href="{{ url_for('proyectos.detalle', id=proyecto.id) }}" class="btn btn-sm btn-outline-danger fw-bold rounded-3 px-3 py-1">Gestionar</a>
+                                    <a href="{{ url_for('documentos.ver_documentos', proyecto_id=proyecto.id) }}" class="btn btn-sm btn-outline-danger fw-bold rounded-3 px-3 py-1">Gestionar</a>
                                 </td>
                             </tr>
                             {% else %}

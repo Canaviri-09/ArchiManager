@@ -21,9 +21,12 @@ def verificar_acceso_proyecto(proyecto_id):
     return pertenece is not None
 
 @documentos_bp.route("/documentos")
+@documentos_bp.route("/documentos/<int:proyecto_id>", endpoint="ver_documentos")
+@documentos_bp.route("/documentacion/<int:proyecto_id>", endpoint="ver_documentacion")
 @login_required
-def index():
-    proyecto_id = request.args.get("proyecto_id", type=int)
+def index(proyecto_id=None):
+    if proyecto_id is None:
+        proyecto_id = request.args.get("proyecto_id", type=int)
     
     if current_user.rol.nombre == "Administrador":
         proyectos = Proyecto.query.all()
