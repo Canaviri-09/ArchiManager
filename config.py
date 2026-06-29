@@ -19,7 +19,7 @@ class Config:
     # Configuración de Supabase Storage (carga de archivos en la nube)
     SUPABASE_URL = os.environ.get("SUPABASE_URL")
     SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
-    SUPABASE_BUCKET = os.environ.get("SUPABASE_BUCKET", "archimanager-files")
+    SUPABASE_BUCKET = os.environ.get("SUPABASE_BUCKET", "Files")
 
     # Extensiones de archivo permitidas por categoría (Módulo 8. Gestión Documental)
     EXTENSIONES_IMAGEN = {"jpg", "jpeg", "png", "webp"}
