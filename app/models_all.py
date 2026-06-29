@@ -17,7 +17,7 @@ class Especialidad(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
-    tipo = db.Column(db.String(20), nullable=False)  # 'Arquitectura' | 'Ingeniería'
+    tipo = db.Column(db.String(20), nullable=False)  
 
     usuarios = db.relationship("Usuario", backref="especialidad", lazy=True)
 
@@ -38,7 +38,7 @@ class Usuario(db.Model, UserMixin):
 
     @property
     def is_active(self):
-        # Flask-Login usa is_active para impedir el login de usuarios desactivados
+       
         return self.activo
 
     def tiene_rol(self, *nombres_rol):

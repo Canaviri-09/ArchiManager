@@ -4,7 +4,6 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from app.documentos import documentos_bp
 from app.extensions import db
-# USAMOS TUS MODELOS REALES: Archivo, Proyecto, EquipoProyecto
 from app.models_all import Archivo, Proyecto, EquipoProyecto
 from app.utilidades import registrar_auditoria
 from datetime import datetime
@@ -41,7 +40,6 @@ def index(proyecto_id=None):
     if proyecto_id:
         if verificar_acceso_proyecto(proyecto_id):
             proyecto_seleccionado = Proyecto.query.get(proyecto_id)
-            # FILTRADO DE BORRADO LÓGICO: Tus modelos usan 'eliminado=False'
             documentos = Archivo.query.filter_by(proyecto_id=proyecto_id, eliminado=False).all()
         else:
             flash("No tienes autorización para consultar la documentación de este proyecto.", "danger")
@@ -65,7 +63,6 @@ def subir(proyecto_id):
         
     filename_original = secure_filename(file.filename)
     
-    # VERSIONADO: Buscamos coincidencias con la columna 'nombre'
     documentos_existentes = Archivo.query.filter_by(proyecto_id=proyecto_id, nombre=filename_original).all()
     
     version_calculada = 1
@@ -75,13 +72,11 @@ def subir(proyecto_id):
     nombre_base, ext = os.path.splitext(filename_original)
     filename_servidor = f"PRY_{proyecto_id}_{nombre_base}_v{version_calculada}{ext}"
     
-    # Guardado físico en el servidor local
     upload_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'documentos')
     os.makedirs(upload_dir, exist_ok=True)
     file_path = os.path.join(upload_dir, filename_servidor)
     file.save(file_path)
     
-    # MAPEADO DE COLUMNAS EXACTAS: proyecto_id, usuario_id, nombre, tipo, url, version_actual, eliminado
     nuevo_archivo = Archivo(
         proyecto_id=proyecto_id,
         usuario_id=current_user.id,
@@ -111,7 +106,6 @@ def eliminar(id):
         flash("No cuenta con autorización para remover este documento técnico.", "danger")
         return redirect(url_for("documentos.index", proyecto_id=archivo.proyecto_id))
         
-    # BORRADO LÓGICO REAL: Marcamos la columna 'eliminado' como True
     archivo.eliminado = True
     db.session.commit()
     

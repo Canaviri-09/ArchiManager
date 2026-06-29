@@ -6,12 +6,12 @@ from app.models_all import Auditoria
 @auditoria_bp.route("/auditoria", methods=["GET"])
 @login_required
 def index():
-    # REGLA DE SEGURIDAD MÁXIMA: Acceso exclusivo para el Administrador
+  
     if current_user.rol.nombre != "Administrador":
         flash("Acceso denegado. No tienes los permisos requerimiento para ver la bitácora de auditoría global.", "danger")
         return redirect(url_for("dashboard.index"))
         
-    # Obtener todas las auditorías ordenadas cronológicamente (las más recientes primero)
+    # Obtener todas las auditorías
     bitacora = Auditoria.query.order_by(Auditoria.fecha.desc()).all()
     
     return render_template("auditoria/index.html", bitacora=bitacora)

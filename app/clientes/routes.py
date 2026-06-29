@@ -6,13 +6,13 @@ from app.models_all import Cliente
 from app.utilidades import registrar_auditoria
 
 def admin_o_manager_requerido():
-    # Helper para restringir acceso de escritura a Colaboradores Técnicos
+
     return current_user.rol.nombre in ["Administrador", "Arquitecto Manager"]
 
 @clientes_bp.route("/clientes", methods=["GET"])
 @login_required
 def index():
-    # Búsqueda en tiempo real o por formulario
+
     busqueda = request.args.get("buscar", "").strip()
     if busqueda:
         clientes = Cliente.query.filter(
@@ -61,7 +61,6 @@ def editar(id):
         flash("No tienes permisos para realizar esta acción.", "danger")
         return redirect(url_for("clientes.index"))
         
-    # AQUÍ ESTÁ EL CAMBIO: Debe terminar en 404
     cliente = Cliente.query.get_or_404(id)
     
     if request.method == "POST":

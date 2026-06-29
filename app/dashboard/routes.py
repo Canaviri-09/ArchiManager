@@ -10,7 +10,7 @@ from app.models_all import Proyecto, Cliente, Usuario, Archivo, EquipoProyecto
 def index():
     rol = current_user.rol.nombre
 
-    # 1. ESCENARIO: EL ADMINISTRADOR (Métricas Globales de la Empresa)
+    # ADMINISTRADOR (todo)
     if rol == "Administrador":
         total_proyectos = Proyecto.query.count()
         total_clientes = Cliente.query.count()
@@ -26,7 +26,7 @@ def index():
         # Listado general de control
         proyectos_recientes = Proyecto.query.order_by(Proyecto.id.desc()).limit(5).all()
 
-    # 2. ESCENARIO: ARQUITECTO MANAGER (Métricas de sus proyectos a cargo)
+    # ARQUITECTO MANAGER (proyectos a cargo)
     elif rol == "Arquitecto Manager":
         total_proyectos = Proyecto.query.filter_by(responsable_id=current_user.id).count()
         total_clientes = db.session.query(db.func.count(db.func.distinct(Proyecto.cliente_id))).filter(Proyecto.responsable_id == current_user.id).scalar() or 0
@@ -38,7 +38,7 @@ def index():
         
         proyectos_recientes = Proyecto.query.filter_by(responsable_id=current_user.id).order_by(Proyecto.id.desc()).all()
 
-    # 3. ESCENARIO: COLABORADOR TÉCNICO (Métricas simplificadas de sus asignaciones)
+    # COLABORADOR TÉCNICO (asignaciones)
     else:
         # Proyectos donde participa como miembro de equipo
         proyectos_vinculados = Proyecto.query.join(EquipoProyecto).filter(EquipoProyecto.usuario_id == current_user.id).all()

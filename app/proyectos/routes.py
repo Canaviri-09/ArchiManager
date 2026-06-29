@@ -5,7 +5,7 @@ from app.extensions import db
 from app.models_all import Proyecto, Usuario, Cliente, EquipoProyecto, Ubicacion, Rol
 from app.utilidades import registrar_auditoria
 from datetime import datetime
-from app.models_all import AvanceProyecto  # Asegurar la importación al inicio de tu archivo
+from app.models_all import AvanceProyecto 
 
 @proyectos_bp.route("/proyectos", methods=["GET"])
 @login_required
@@ -70,7 +70,6 @@ def crear():
         
     clientes = Cliente.query.all()
     
-    # SOLUCIÓN DEL ERROR: Usamos Rol.nombre en lugar de Usuario.rol.nombre
     managers = Usuario.query.join(Rol, Usuario.rol_id == Rol.id).filter(
         Rol.nombre.in_(["Administrador", "Arquitecto Manager"])
     ).all()
@@ -112,7 +111,6 @@ def registrar_avance(proyecto_id):
         flash("El porcentaje ingresado debe encontrarse en un rango de 0 a 100.", "warning")
         return redirect(url_for("proyectos.detalle", id=proyecto_id))
 
-    # Regla de negocio: Actualización automática si el nuevo avance es superior al registrado
     if porcentaje > proyecto.avance_actual:
         proyecto.avance_actual = porcentaje
 

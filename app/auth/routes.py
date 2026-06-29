@@ -9,7 +9,8 @@ from app.utilidades import registrar_auditoria
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    # Si ya hay sesión activa, se evita mostrar el login de nuevo
+    
+    # Si ya hay sesión activa se evita mostrar el login de nuevo
     if current_user.is_authenticated:
         return redirect(url_for("dashboard.index"))
 

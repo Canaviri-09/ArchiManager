@@ -48,7 +48,7 @@ def crear():
             
         if file and es_pdf(file.filename):
             filename = secure_filename(f"CONTRATO_{numero_contrato}_{file.filename}")
-            # Definir ruta de guardado segura en la carpeta uploads
+            
             upload_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'contratos')
             os.makedirs(upload_dir, exist_ok=True)
             file_path = os.path.join(upload_dir, filename)
@@ -74,7 +74,7 @@ def crear():
         else:
             flash("Formato de archivo inválido. Solo se admiten documentos PDF.", "danger")
 
-    # Carga de selectores dinámicos según restricciones de rol
+    # Carga de selectores segun restricciones de rol
     if current_user.rol.nombre == "Administrador":
         proyectos = Proyecto.query.all()
     else:
